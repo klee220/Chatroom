@@ -1,0 +1,39 @@
+<h1> Home </h1>
+<p>This is the {{ title }} page</p>
+{{#if isAvailable}}
+    <script>
+    var interval;
+    interval = setInterval(setInt, 1000);
+
+    function setInt() {
+    fetch("http://localhost:8080/getRoom")
+        .then(response => response.json())
+        .then(data => {
+            //console.log(data);
+            refreshPage(data); 
+        });
+    }
+    
+    function refreshPage(room){
+        document.getElementsByTagName('p')[0].innerHTML = "This is the home page";
+
+        for(var i = 0; i < room.length; i++){
+            let newList = document.createElement("li");
+            let roomList = document.getElementsByTagName('p')[0];
+            newList.innerHTML = room[i].name.link(room[i].name);
+            roomList.appendChild(newList);
+        }     
+    
+    }
+    </script>
+    {{!-- <ul>
+        {{#each rooms}}
+            <li> <a href={{this.name}}> {{this.name}}  </a></li>
+        {{/each}}
+    </ul> --}}
+{{/if}}
+
+<form action="/create" method="POST">
+<input type="text" name="roomName" placeholder="enter room name"/>
+<input type="submit" value="create room"/> 
+</form>

@@ -1,0 +1,64 @@
+<h1> Room </h1>
+{{!-- <p>This is a demo of chatroom page</p> --}}
+<p>
+    The room you are visiting is {{ roomName }}
+</p>
+<p>To generate a new room, here is the room id: {{ newRoomId }}</p>
+
+
+<form action="/createMsg" method="POST" id='newMsg'>
+<input type="text" name="msgName" placeholder="enter message"/> 
+<input name="room_name" type="hidden" value="{{roomName}}"/> 
+<input type="submit" value="send"/> 
+</form>
+
+<script>
+var nickname = prompt("Please enter your username", "");
+var form = document.getElementById('newMsg');
+var myvar = document.createElement('input');
+myvar.setAttribute('name', 'nickname');
+myvar.setAttribute('type', 'hidden');
+myvar.setAttribute('value', nickname);
+form.appendChild(myvar);
+</script>
+
+<script>
+var interval;
+interval = setInterval(setInt, 1000);
+
+function setInt() {
+fetch("/:roomName/getmessage")
+    .then(response => response.json())
+    .then(data => {
+        //console.log(data);
+        refreshPage(data); 
+    });
+}
+
+function refreshPage(message){
+    var body = document.getElementsByTagName('p')[1],
+    newP = document.createElement('p');   
+    newP.id = "new";                   
+    body.appendChild(newP);               
+    
+    document.getElementsByTagName('p')[2].innerHTML = "";
+
+    for(var i = 0; i < message.length; i++){
+        if(message[i].room_name == "{{roomName}}") {
+            let newMsg = document.createElement("div");
+            /*
+            let name = document.createElement("h3");
+            let text = document.createElement("p");
+            name.innerHTML = message[i].nickname + ": ";
+            text.innerHTML = message[i].messageBody;
+            newMsg.appendChild(name);
+            newMsg.appendChild(text);
+            */
+            let rm = document.getElementsByTagName('p')[2];
+            newMsg.innerHTML = message[i].nickname + ": " + message[i].messageBody + " " + message[i].created_at;
+            rm.appendChild(newMsg);
+        }
+    }     
+}
+</script>
+
